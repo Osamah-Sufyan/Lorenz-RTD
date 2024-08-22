@@ -26,19 +26,19 @@ delta_t = 0.1
 
 initial_state = np.array([1.0, 1.0, 1.0])
 
-# Time array
+
 t = np.arange(t_start, t_end, dt)
 
-# Initialize state array
+
 states = np.zeros((len(t), 3))
 states[0] = initial_state
 
 
-# Solve using RK4
+
 for i in range(1, len(t)):
     states[i] = rk4_step(lorenz_system, t[i-1], states[i-1], dt, c1, c2, c3)
 
-# Extract X, Y, Z coordinates
+
 X, Y, Z = states.T
 
 x_sampled = X[::100]
@@ -53,7 +53,7 @@ with open('lorentz_system_data.json', 'w') as jsonfile:
     json.dump(data, jsonfile)
 
 
-# Plot X and Z coordinates over time
+
 plt.figure(figsize=(12, 6))
 plt.plot(t, X, label='X')
 plt.plot(t, Z, label='Z')
@@ -64,7 +64,7 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-# 3D plot of the Lorenz attractor
+
 fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111, projection='3d')
 ax.plot(x_sampled, y_sampled, z_sampled)
