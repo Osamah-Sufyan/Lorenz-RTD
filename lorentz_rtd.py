@@ -69,7 +69,7 @@ class DifferentialEquationSolver:
         fV = self.a * np.log(term1) * term2 + term3
         
         dVdt = (I - fV )/(self.C)# Simplified m(t)
-        dIdt = (self.Vm(self.V0, t) - V - self.R * I )/(self.L) # Simplified Vm(t)
+        dIdt = (self.Vm(self.V0, t) - V - self.R * I )/(self.L) 
         # dSdt = (self.gamma_m * (N - self.N0) - 1 / self.tau_p) * S + self.gamma_m * N +np.sqrt(self.gamma_m*N*S) * np.random.normal(0, 1)
         # dNdt = (self.J + self.eta * I) / self.q_e - (self.gamma_l + self.gamma_m + self.gamma_nr) * N - self.gamma_m * (N - self.N0) * S
         return np.array([dVdt, dIdt])
@@ -91,8 +91,8 @@ class DifferentialEquationSolver:
         V_values = []
         for _ in range(num_steps):
             results.append(y)
-            I_values.append(y[1])  # assuming y[0] is I
-            V_values.append(y[0])  # assuming y[1] is V
+            I_values.append(y[1]) 
+            V_values.append(y[0]) 
             y = self.rk4_step(y, t, dt)
             t += dt
         return np.array(results), np.array(I_values), np.array(V_values)
