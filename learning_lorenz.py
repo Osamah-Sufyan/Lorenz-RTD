@@ -1,6 +1,3 @@
-##### ridge regression implementation ########
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
@@ -42,18 +39,19 @@ with open('lorentz_system_data.json', 'r') as jsonfile:
 # plt.savefig('lorentz_attractor.pdf')
 # plt.show()
 
+
 print (len(x))
 
-buffer_data_1_t = t[:round(len(t)/8)]
-buffer_data_1_y = x[:round(len(t)/8)]
-train_data_t = t[round(len(t)/8):round(3*(len(t)/8))]
-train_data_y = x[round(len(t)/8):round(3*(len(t)/8))]
-buffer_data_2_t = t[round(3*(len(t)/8)):round(5*(len(t)/8))]
-buffer_data_2_y = x[round(3*(len(t)/8)):round(5*(len(t)/8))]
-test_data_t = t[round(5*(len(t)/8)):round(7*(len(t)/8))]
-test_data_y = x[round(5*(len(t)/8)):round(7*(len(t)/8))]
-buffer_data_3_t = t[round(7*(len(t)/8)):]
-buffer_data_3_y = x[round(7*(len(t)/8)):]
+buffer_data_1_t = t[:round(0.05*len(t))]
+buffer_data_1_y = x[:round(0.05*len(t))]
+train_data_t = t[round(0.05*len(t)):round(0.75*(len(t)))]
+train_data_y = x[round(0.05*len(t)):round(0.75*(len(t)))]
+buffer_data_2_t = t[round(0.75*(len(t))):round(0.8*(len(t)))]
+buffer_data_2_y = x[round(0.75*(len(t))):round(0.8*(len(t)))]
+test_data_t = t[round(0.8*(len(t))):round(0.95*(len(t)))]
+test_data_y = x[round(0.8*(len(t))):round(0.95*(len(t)))]
+buffer_data_3_t = t[round(0.95*(len(t))):]
+buffer_data_3_y = x[round(0.95*(len(t))):]
 
 
 print(f"total divisions: ",len(buffer_data_1_t)+len(train_data_t)+len(buffer_data_2_t)+len(test_data_t))
@@ -148,13 +146,17 @@ yticks_labels = [f'{y * 1e3:.6f}' for y in y_ticks]
 # plt.show()
 
 print(f"number of step indices: ", len(step_indices))
-step_indices_training = step_indices[round(len(step_indices)/8)+30:round(3*len(step_indices)/8)+30]
-step_indices_testing = step_indices[round(5*len(step_indices)/8)+30:7*round(len(step_indices)/8)+30]
+step_indices_training = step_indices[round(0.05*len(step_indices)):round(0.75*len(step_indices))]
+step_indices_testing = step_indices[round(0.8*len(step_indices)):round(0.95*len(step_indices))]
 I_values_training_read = [I_values[i] for i in step_indices_training]
 print(f"length of I_train reads", len(I_values_training_read))
 print(f"length of train data",len(train_data_t))
 
+
+
 S_matrix_training = np.array(I_values_training_read).reshape(len(train_data_t), no_virtual_nodes)
+ones_column_training = np.ones((S_matrix_training.shape[0], 1))
+S_matrix_training = np.hstack((S_matrix_training, ones_column_training))
 S_training_1d = S_matrix_training.ravel()
 
 print(f"length of training steps: ", len(step_indices_training))
@@ -162,6 +164,9 @@ print(f"length of testing steps: ", len(step_indices_testing))
 I_values_testing_read = [I_values[i] for i in step_indices_testing]
 print(f"length of I_test reads", len(I_values_testing_read))
 S_matrix_testing = np.array(I_values_testing_read).reshape(len(test_data_t), no_virtual_nodes)
+ones_column_testing = np.ones((S_matrix_testing.shape[0], 1))
+
+S_matrix_testing = np.hstack((S_matrix_testing, ones_column_testing))
 S_testing_1d = S_matrix_testing.ravel()
 
 
@@ -188,9 +193,9 @@ S_testing_1d = S_matrix_testing.ravel()
 
 
 
-alpha_values = np.logspace(-15, -9, 100)
-target_vector_train = x[round(len(t)/8)+1:round(3*len(t)/8) +1]
-target_vector_test = x[round(5*len(t)/8)+1:round(7*len(t)/8)+1] 
+alpha_values = np.logspace(-15, -8, 100)
+target_vector_train = x[round(0.05*len(t))+1:round(0.75*len(t))+1]
+target_vector_test = x[round(0.8*len(t))+1:round(0.95*len(t))+1] 
 
 nrmse_train = []
 nrmse_test = []
@@ -238,10 +243,10 @@ for alpha in alpha_values:
 plt.figure(figsize=(10, 6))
 plt.plot(alpha_values, nrmse_train, label='Training NRMSE')
 plt.plot(alpha_values, nrmse_test, label='Testing NRMSE')
-plt.xlabel('Alpha')
+plt.xlabel(r'$\lambda$')
 plt.ylabel('NRMSE')
-plt.title('NRMSE vs Alpha for Ridge Regression')
-plt.xscale('log')  # Set x-axis to logarithmic scale
+plt.title('NRMSE vs lambda for Ridge Regression')
+plt.xscale('log')  
 plt.legend()
 plt.grid(True)
 plt.savefig('ridge_regression_ex_down_lorenz.pdf')
